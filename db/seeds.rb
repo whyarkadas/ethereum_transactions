@@ -5,3 +5,13 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+100.times do
+  Transaction.create(
+		from: Faker::Name.name_with_middle,
+		to: Faker::Name.name_with_middle,
+		value: Faker::Number.number(digits: 4),
+		block_id: Faker::Number.number(digits: 3),
+		date: Faker::Date.between(from: 2.days.ago, to: Date.today)
+  )
+end
