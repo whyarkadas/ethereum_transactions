@@ -1,24 +1,31 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Installation phase
 
-Things you may want to cover:
+* install ruby gems
 
-* Ruby version
+`bundle install`
 
-* System dependencies
+* install js packages
 
-* Configuration
+`yarn install`
 
-* Database creation
+* setup the DB
 
-* Database initialization
+`rake db:setup`
 
-* How to run the test suite
+* add fake transactions by running db seed
 
-* Services (job queues, cache servers, search engines, etc.)
+`rake db:seed`
 
-* Deployment instructions
+* run rails server
 
-* ...
+`bin/rails server`
+
+* run webpacker on different terminal
+
+`bin/webpack-dev-server`
+
+* visit localhost:3000
+
+* sign up a user account

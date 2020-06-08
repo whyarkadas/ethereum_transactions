@@ -1,30 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import Transactions from "./Transactions";
 import { fetchAllTransactions } from '../api/transactions';
+import { withCookies } from 'react-cookie';
+import ActionCable from "action-cable-react-jwt";
+import { render } from 'react-dom';
 
-const Home = () => {
-	const transactions= [{from: "Toyota", to: "Celica", value: 35000, blockId:1},
-											{from: "Mehmet", to: "Ahmet", value: 36000, blockId:2},
-											{from: "Engin", to: "Soner", value: 37000, blockId:3}];
+class Home extends React.Component {
 
-	
-	const [allTransactions, setAllTransactions] = useState([]);
+	constructor(props) {
+		super(props);
 
-	const fetchTransactions = () => {
+		this.state = {
+			allTransactions:[]			
+		}
+	}
+	//const [allTransactions, setAllTransactions] = useState([]);
+
+	componentDidMount(){
+		this.fetchTransactions();
+    const cable = ActionCable.createConsumer("ws://localhost:3000/cable", localStorage.getItem("token"));
+    
+    this.sub = cable.subscriptions.create({ channel: 'TransactionsChannel' }, {
+      received: this.receiveTransactionData
+    });
+	}
+
+	receiveTransactionData = (data) => {
+		this.setState({ allTransactions: [...allTransactions, data.transaction] })
+  };
+
+	fetchTransactions = () => {
 		fetchAllTransactions().then(allTransactionsData => {
-			setAllTransactions(allTransactionsData);        
+			 //setAllTransactions(allTransactionsData);        
+			 this.setState({ allTransactions: allTransactionsData })
 		});
 	};
 
-	useEffect(() => {
-		fetchTransactions();
-    }, [])
-
-	return(
-		<div> 
-			<Transactions transactions={allTransactions} />
-		</div>
-   );
+	render() {
+		const { allTransactions } = this.state
+		return(
+			<div> 
+				<Transactions transactions={allTransactions.transactions} />
+			</div>
+		);
+	};
 };
 
-export default Home;
+export default withCookies(Home);

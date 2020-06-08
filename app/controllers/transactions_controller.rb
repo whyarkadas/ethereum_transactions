@@ -1,5 +1,4 @@
 require_relative '../serializers/transactions/transaction_serializer'
-
 class TransactionsController < ApplicationController
   before_action :set_transaction, only: [:show, :edit, :update, :destroy]
 
@@ -36,6 +35,9 @@ class TransactionsController < ApplicationController
 
     respond_to do |format|
       if @transaction.save
+
+        ActionCable.server.broadcast 'conversations_channel',
+                                     Transactions::TransactionSerializer.new(@transaction).serializable_hash
         format.html { redirect_to @transaction, notice: 'Transaction was successfully created.' }
         format.json { render :show, status: :created, location: @transaction }
       else
